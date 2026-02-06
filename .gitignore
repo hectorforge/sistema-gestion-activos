@@ -1,0 +1,86 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+*.class
+*.jar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+.mvn/
+
+# Gradle
+.gradle/
+build/
+gradle/
+gradlew
+gradlew.bat
+*.gradle
+
+# Spring Boot
+*.log
+.DS_Store
+*.exe
+*.dll
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Node (si usas frontend con Node)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# VS Code (si algunos usan este editor)
+.vscode/
+*.code-workspace
+
+# Sistema Operativo
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# PostgreSQL local
+*.sql.bak
+pgdata/
+
+# Docker
+.dockerignore
+
+# Base de datos local
+data/
+postgres_data/
+
+# Archivos temporales
+temp/
+tmp/
+*.tmp
+
+# IDE específicos
+.classpath
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos de configuración local
+application-local.yml
+application-local.properties
+application-dev.yml
+application-dev.properties
+
+# Logs
+logs/
+*.log*
