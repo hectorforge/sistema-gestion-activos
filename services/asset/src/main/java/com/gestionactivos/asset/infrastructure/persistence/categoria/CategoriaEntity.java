@@ -14,20 +14,33 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tbl_categoria", indexes = {
-        @Index(name = "idx_categoria_nombre", columnList = "nombreCategoria"),
-        @Index(name = "idx_categoria_es_activo", columnList = "esActivo")
+        @Index(name = "idx_categoria_nombre", columnList = "nombre_categoria"),
+        @Index(name = "idx_categoria_es_activo", columnList = "es_activo")
 })
 public class CategoriaEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id_category")
     private UUID idCategory;
-    private String nombreCategoria;
-    private String abreviaturaCategoria;
-    private String descripcionCategoria;
-    private String urlImgCategoria;
-    private Boolean esActivo;
-    private Boolean estaEliminado;
 
+    @Column(name = "nombre_categoria", nullable = false)
+    private String nombreCategoria;
+
+    @Column(name = "abreviatura_categoria", nullable = false)
+    private String abreviaturaCategoria;
+
+    @Column(name = "descripcion_categoria")
+    private String descripcionCategoria;
+
+    @Column(name = "url_img_categoria")
+    private String urlImgCategoria;
+
+    @Column(name = "es_activo", nullable = false)
+    private Boolean esActivo;
+
+    @Column(name = "esta_eliminado", nullable = false)
+    private Boolean estaEliminado;
 
     @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
     private List<ActivoEntity> activos;

@@ -1,0 +1,3 @@
+CREATE DATABASE asset_db;
+CREATE DATABASE reporting_db;
+CREATE DATABASE auth_db;

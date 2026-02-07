@@ -3,7 +3,7 @@ services:
   ## Servidor de la base de datos PostgresSQL
   postgres:
     container_name: pg_server
-    image: postgres
+    image: pgvector/pgvector:pg17
     environment:
       POSTGRES_DB: microservices_db
       POSTGRES_USER: admin
@@ -13,6 +13,7 @@ services:
       - 5430:5432
     volumes:
       - postgres:/var/lib/postgresql/data
+      - ./dbs/init_dbs.sql:/docker-entrypoint-initdb.d/init_dbs.sql
     networks:
       - microservices-net
     restart: unless-stopped
