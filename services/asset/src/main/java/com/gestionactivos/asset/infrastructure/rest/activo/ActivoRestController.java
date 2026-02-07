@@ -14,8 +14,6 @@ import com.gestionactivos.asset.infrastructure.rest.activo.validators.CrearActiv
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,10 +21,10 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/activos")
-@Tag(name = "Activos", description = "Api para la correcta gestión de activos para la institución.")
-// http://localhost:8050/swagger-ui/index.html
+@Tag(name = "Activos", description = "API para la gestión de activos de la institución. Permite crear, actualizar, consultar, activar/desactivar y eliminar activos, así como listar activos con filtros y paginación.")
+@RequiredArgsConstructor
+// Documentacion: http://localhost:8050/swagger-ui/index.html
 public class ActivoRestController {
 
     private final IActivoUsecaseInPort activoUsecase;
@@ -34,88 +32,69 @@ public class ActivoRestController {
 
     @Operation(
             summary = "Crear un activo",
-            description = "Crea un nuevo activo en el sistema")
+            description = "Crea un nuevo activo en el sistema. Verifica que la categoría exista y genera automáticamente el código de inventario. Devuelve el activo creado o un error si falla la operación.")
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> crear(@Validated(CrearActivoGrupo.class) @RequestBody ActivoRequest request) {
+    public OperationResult<ActivoResponse> crear(@Validated(CrearActivoGrupo.class) @RequestBody ActivoRequest request) {
         OperationResult<Activo> result = activoUsecase.crear(mapper.toDomain(request));
         if (result.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(result.data()));
+            return OperationResult.success(mapper.toResponse(result.data()));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+        return OperationResult.failureSingle(result.errorCode(), result.errorMessage());
     }
 
     @Operation(
             summary = "Actualizar un activo",
-            description = "Actualiza un activo en el sistema")
+            description = "Actualiza un activo existente. Valida que el activo exista y que el ID proporcionado coincida. Devuelve el activo actualizado o un error si falla la operación.")
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> actualizar(@Validated(ActualizarActivoGrupo.class) @RequestBody ActivoRequest request, @PathVariable UUID id) {
-        OperationResult<Activo> result = activoUsecase.actualizar(id,mapper.toDomain(request));
+    public OperationResult<ActivoResponse> actualizar(@Validated(ActualizarActivoGrupo.class) @RequestBody ActivoRequest request, @PathVariable UUID id) {
+        OperationResult<Activo> result = activoUsecase.actualizar(id, mapper.toDomain(request));
         if (result.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.OK).body(mapper.toResponse(result.data()));
+            return OperationResult.success(mapper.toResponse(result.data()));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+        return OperationResult.failureSingle(result.errorCode(), result.errorMessage());
     }
 
     @Operation(
-            summary = "Obtener un activo",
-            description = "Obtiene un activo por su ID")
+            summary = "Obtener un activo por ID",
+            description = "Recupera un activo utilizando su ID único. Devuelve el activo si existe o un error indicando que no se encontró.")
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> obtenerPorId(@PathVariable UUID id) {
+    public OperationResult<ActivoResponse> obtenerPorId(@PathVariable UUID id) {
         OperationResult<Activo> result = activoUsecase.obtenerPorId(id);
         if (result.isSuccess()) {
-            return ResponseEntity.ok(mapper.toResponse(result.data()));
+            return OperationResult.success(mapper.toResponse(result.data()));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        return OperationResult.failureSingle(result.errorCode(), result.errorMessage());
     }
 
     @Operation(
-            summary = "Cambiar estado de un activo",
-            description = "Cambia el estado de negocio de un activo por su ID")
+            summary = "Cambiar estado de negocio de un activo",
+            description = "Cambia el estado de negocio de un activo (por ejemplo: en uso, mantenimiento, inactivo) basado en su ID. Devuelve true si se actualizó correctamente o un error si el activo no existe.")
     @PatchMapping("/{id}/estado")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> cambiarEstado(@PathVariable UUID id, @RequestParam EstadoActivo nuevoEstado) {
-        OperationResult<Boolean> result = activoUsecase.cambiarEstadoNegocio(id, nuevoEstado);
-        if (result.isSuccess()) {
-            return ResponseEntity.ok(result.data());
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    public OperationResult<Boolean> cambiarEstado(@PathVariable UUID id, @RequestParam EstadoActivo nuevoEstado) {
+        return activoUsecase.cambiarEstadoNegocio(id, nuevoEstado);
     }
 
     @Operation(
             summary = "Cambiar visibilidad de un activo",
-            description = "Activa o desactiva un activo por su ID")
+            description = "Activa o desactiva un activo para que sea visible o no en el sistema. Devuelve true si se realizó correctamente o un error si el activo no existe.")
     @PatchMapping("/{id}/visibilidad")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> cambiarVisibilidad(@PathVariable UUID id, @RequestParam Boolean esActivo) {
-        OperationResult<Boolean> result = activoUsecase.activarDesactivar(id, esActivo);
-        if (result.isSuccess()) {
-            return ResponseEntity.ok(result.data());
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    public OperationResult<Boolean> cambiarVisibilidad(@PathVariable UUID id, @RequestParam Boolean esActivo) {
+        return activoUsecase.activarDesactivar(id, esActivo);
     }
 
     @Operation(
             summary = "Eliminar un activo",
-            description = "Elimina un activo por su ID")
+            description = "Elimina un activo por su ID. Devuelve true si se eliminó correctamente o un error si no existe.")
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> eliminar(@PathVariable UUID id) {
-        OperationResult<Boolean> result = activoUsecase.eliminarPorId(id);
-        if (result.isSuccess()) {
-            return ResponseEntity.ok(result.data());
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    public OperationResult<Boolean> eliminar(@PathVariable UUID id) {
+        return activoUsecase.eliminarPorId(id);
     }
 
     @Operation(
-            summary = "Listar activos",
-            description = "Lista activos con filtros y paginación")
+            summary = "Listar activos con filtros y paginación",
+            description = "Lista activos según filtros opcionales (nombre, código, categoría, estado activo) y permite paginación. Devuelve un PagedResult con los activos encontrados o un error en caso de fallo.")
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> listar(
+    public OperationResult<PagedResult<ActivoResponse>> listar(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String codigo,
             @RequestParam(required = false) UUID categoriaId,
@@ -123,14 +102,12 @@ public class ActivoRestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        ActivoFiltro filtro = new ActivoFiltro(nombre, codigo, categoriaId, esActivo);
-        OperationResult<PagedResult<Activo>> result = activoUsecase.listar(filtro, page, size);
+        OperationResult<PagedResult<Activo>> result = activoUsecase.listar(new ActivoFiltro(nombre, codigo, categoriaId, esActivo), page, size);
 
         if (result.isSuccess()) {
             List<ActivoResponse> content = result.data().data().stream()
                     .map(mapper::toResponse)
                     .toList();
-
             PagedResult<ActivoResponse> response = new PagedResult<>(
                     content,
                     result.data().pageNumber(),
@@ -143,8 +120,8 @@ public class ActivoRestController {
                     result.data().hasPrevious(),
                     result.data().isEmpty()
             );
-            return ResponseEntity.ok(response);
+            return OperationResult.success(response);
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        return OperationResult.failureSingle(result.errorCode(), result.errorMessage());
     }
 }
