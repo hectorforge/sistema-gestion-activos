@@ -1,4 +1,4 @@
-package com.gestionactivos.asset.domain.incidente;
+package com.gestionactivos.asset.domain.incidente.utils;
 
 public enum TipoIncidente {
     DANIO,

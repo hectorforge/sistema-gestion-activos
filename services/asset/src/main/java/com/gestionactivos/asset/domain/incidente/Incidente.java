@@ -1,5 +1,8 @@
 package com.gestionactivos.asset.domain.incidente;
 
+import com.gestionactivos.asset.domain.incidente.utils.EstadoIncidente;
+import com.gestionactivos.asset.domain.incidente.utils.TipoIncidente;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 

@@ -1,5 +1,7 @@
 package com.gestionactivos.asset.domain.asignacion;
 
+import com.gestionactivos.asset.domain.asignacion.utils.EstadoAsignacion;
+
 import java.time.LocalDate;
 import java.util.UUID;
 

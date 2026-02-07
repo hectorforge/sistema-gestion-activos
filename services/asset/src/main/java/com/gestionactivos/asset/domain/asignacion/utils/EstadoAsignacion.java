@@ -1,4 +1,4 @@
-package com.gestionactivos.asset.domain.asignacion;
+package com.gestionactivos.asset.domain.asignacion.utils;
 
 public enum EstadoAsignacion {
     ACTIVA,
