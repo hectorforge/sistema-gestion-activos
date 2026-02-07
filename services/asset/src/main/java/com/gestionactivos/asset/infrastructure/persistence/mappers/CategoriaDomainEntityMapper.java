@@ -13,6 +13,7 @@ public class CategoriaDomainEntityMapper {
         CategoriaEntity entity = new CategoriaEntity();
         entity.setIdCategory(domain.getIdCategoria());
         entity.setNombreCategoria(domain.getNombreCategoria());
+        entity.setAbreviaturaCategoria(domain.getAbreviaturaCategoria());
         entity.setDescripcionCategoria(domain.getDescripcionCategoria());
         entity.setUrlImgCategoria(domain.getUrlImgCategoria());
         entity.setEsActivo(domain.getEsActivo());
@@ -26,6 +27,7 @@ public class CategoriaDomainEntityMapper {
         Categoria domain = new Categoria();
         domain.setIdCategoria(entity.getIdCategory());
         domain.setNombreCategoria(entity.getNombreCategoria());
+        domain.setAbreviaturaCategoria(entity.getAbreviaturaCategoria());
         domain.setDescripcionCategoria(entity.getDescripcionCategoria());
         domain.setUrlImgCategoria(entity.getUrlImgCategoria());
         domain.setEsActivo(entity.getEsActivo());

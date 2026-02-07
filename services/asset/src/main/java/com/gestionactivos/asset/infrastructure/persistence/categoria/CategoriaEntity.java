@@ -22,6 +22,7 @@ public class CategoriaEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idCategory;
     private String nombreCategoria;
+    private String abreviaturaCategoria;
     private String descripcionCategoria;
     private String urlImgCategoria;
     private Boolean esActivo;

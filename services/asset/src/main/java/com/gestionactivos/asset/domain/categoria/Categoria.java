@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public class Categoria {
     private UUID idCategoria;
+    private String abreviaturaCategoria;
     private String nombreCategoria;
     private String descripcionCategoria;
     private String urlImgCategoria;
@@ -13,8 +14,9 @@ public class Categoria {
     public Categoria() {
     }
 
-    public Categoria(UUID idCategory, String nombreCategoria, String descripcionCategoria, String urlImgCategoria, Boolean esActivo, Boolean estaEliminado) {
-        this.idCategoria = idCategory;
+    public Categoria(UUID idCategoria, String abreviaturaCategoria, String nombreCategoria, String descripcionCategoria, String urlImgCategoria, Boolean esActivo, Boolean estaEliminado) {
+        this.idCategoria = idCategoria;
+        this.abreviaturaCategoria = abreviaturaCategoria;
         this.nombreCategoria = nombreCategoria;
         this.descripcionCategoria = descripcionCategoria;
         this.urlImgCategoria = urlImgCategoria;
@@ -28,6 +30,14 @@ public class Categoria {
 
     public void setIdCategoria(UUID idCategoria) {
         this.idCategoria = idCategoria;
+    }
+
+    public String getAbreviaturaCategoria() {
+        return abreviaturaCategoria;
+    }
+
+    public void setAbreviaturaCategoria(String abreviaturaCategoria) {
+        this.abreviaturaCategoria = abreviaturaCategoria;
     }
 
     public String getNombreCategoria() {

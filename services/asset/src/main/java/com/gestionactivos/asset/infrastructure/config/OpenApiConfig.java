@@ -1,4 +1,4 @@
-package com.gestionactivos.asset.infrastructure.swagger;
+package com.gestionactivos.asset.infrastructure.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

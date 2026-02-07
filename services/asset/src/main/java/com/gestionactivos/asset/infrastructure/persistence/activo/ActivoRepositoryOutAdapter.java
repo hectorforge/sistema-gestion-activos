@@ -123,4 +123,9 @@ public class ActivoRepositoryOutAdapter implements IActivoRepositoryOutPort {
                 pageResult.isEmpty()
         );
     }
+
+    @Override
+    public String obtenerUltimoCodigoDelDia(String abreviatura) {
+        return activoRepository.obtenerUltimoCodigoDelDia(abreviatura);
+    }
 }

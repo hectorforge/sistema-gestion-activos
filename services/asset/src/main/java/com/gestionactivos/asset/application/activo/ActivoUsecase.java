@@ -3,8 +3,12 @@ package com.gestionactivos.asset.application.activo;
 import com.gestionactivos.asset.domain.activo.Activo;
 import com.gestionactivos.asset.domain.activo.ports.in.IActivoUsecaseInPort;
 import com.gestionactivos.asset.domain.activo.ports.out.IActivoRepositoryOutPort;
+import com.gestionactivos.asset.domain.activo.ports.out.ICodigoInventarioGeneratorOutPort;
 import com.gestionactivos.asset.domain.activo.utils.ActivoFiltro;
 import com.gestionactivos.asset.domain.activo.utils.EstadoActivo;
+import com.gestionactivos.asset.domain.categoria.Categoria;
+import com.gestionactivos.asset.domain.categoria.ports.in.ICategoriaUsecaseInPort;
+import com.gestionactivos.asset.domain.categoria.ports.out.ICategoriaRepositoryOutPort;
 import com.gestionactivos.asset.domain.common.ErrorCatalog;
 import com.gestionactivos.asset.domain.common.OperationResult;
 import com.gestionactivos.asset.domain.common.PagedResult;
@@ -20,10 +24,24 @@ import java.util.UUID;
 public class ActivoUsecase implements IActivoUsecaseInPort {
 
     private final IActivoRepositoryOutPort activoRepositoryOutPort;
+    private final ICodigoInventarioGeneratorOutPort codigoGenerator;
+    private final ICategoriaRepositoryOutPort categoriaRepository;
+
 
     @Override
     public OperationResult<Activo> crear(Activo activo) {
         try {
+            Optional<Categoria> categoriaEncontrada = categoriaRepository.obtenerPorId(activo.getCategoriaId());
+            if(categoriaEncontrada.isEmpty()){
+                return OperationResult.failureSingle(
+                        ErrorCatalog.CATEGORIA_NOT_FOUND.getErrorCode(),
+                        ErrorCatalog.CATEGORIA_NOT_FOUND.getErrorMessage()
+                );
+            }
+            activo.setCodigoInventario(null); // El código se genera automáticamente, no se acepta desde la entrada
+            String categoriaAbreviatura = categoriaEncontrada.get().getAbreviaturaCategoria();
+            String codigo = codigoGenerator.generarCodigo(categoriaAbreviatura);
+            activo.setCodigoInventario(codigo);
             Activo guardado = activoRepositoryOutPort.guardar(activo);
             return OperationResult.success(guardado);
         } catch (Exception e) {

@@ -18,14 +18,6 @@ public record ActivoRequest(
         String id,
 
         @Schema(
-                description = "Código único de inventario del activo",
-                defaultValue = "INV-LAP-0001"
-        )
-        @NotBlank(message = "El código de inventario es obligatorio", groups = CrearActivoGrupo.class)
-        @Size(max = 50, message = "El código no puede exceder los 50 caracteres")
-        String codigoInventario,
-
-        @Schema(
                 description = "Nombre del activo",
                 defaultValue = "Laptop Dell Latitude 5420"
         )

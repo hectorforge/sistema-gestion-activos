@@ -20,4 +20,13 @@ public interface IActivoJpaRepository extends JpaRepository<ActivoEntity, UUID> 
             @Param("categoriaId") UUID categoriaId,
             @Param("esActivo") Boolean esActivo,
             Pageable pageable);
+
+    @Query(value = """
+        SELECT codigo_inventario
+        FROM tbl_activo
+        WHERE codigo_inventario LIKE CONCAT(:prefijo, '%')
+        ORDER BY codigo_inventario DESC
+        LIMIT 1
+        """, nativeQuery = true)
+    String obtenerUltimoCodigoDelDia(String prefijo);
 }

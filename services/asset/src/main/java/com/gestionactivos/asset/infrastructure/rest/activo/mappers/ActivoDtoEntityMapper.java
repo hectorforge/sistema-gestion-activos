@@ -17,7 +17,6 @@ public class ActivoDtoEntityMapper {
         if (request == null) return null;
 
         Activo activo = new Activo();
-        activo.setCodigoInventario(request.codigoInventario());
         activo.setNombreActivo(request.nombreActivo());
         activo.setDescripcion(request.descripcion());
         activo.setUrlImgActivo(request.urlImgActivo());
