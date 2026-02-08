@@ -74,6 +74,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             }
 
             activo.setIdActivo(id);
+            activo.setCodigoInventario(existente.getCodigoInventario());
             activo.setFechaCreacion(existente.getFechaCreacion());
             activo.setFechaActualizacion(LocalDateTime.now());
 
