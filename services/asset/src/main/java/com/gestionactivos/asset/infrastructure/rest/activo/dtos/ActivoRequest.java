@@ -39,7 +39,7 @@ public record ActivoRequest(
 
         @Schema(
                 description = "Identificador de la categoría del activo",
-                defaultValue = "CAT-ELECT-01"
+                defaultValue = "22222222-2222-2222-2222-222222222222"
         )
         @NotBlank(message = "El ID de categoría es obligatorio")
         String categoriaId,
@@ -53,7 +53,7 @@ public record ActivoRequest(
 
         @Schema(
                 description = "Ubicación física donde se encuentra el activo",
-                defaultValue = "Almacén Central - Estante A3"
+                defaultValue = "BIBLIOTECA"
         )
         @NotBlank(message = "La ubicación física es obligatoria")
         String ubicacionFisica,

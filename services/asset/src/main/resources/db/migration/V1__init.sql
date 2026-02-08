@@ -41,6 +41,16 @@ CREATE TABLE IF NOT EXISTS tbl_activo (
     ON DELETE RESTRICT
     );
 
+CREATE TABLE IF NOT EXISTS tbl_asignacion (
+    id_asignacion UUID PRIMARY KEY NOT NULL,
+    id_activo UUID NOT NULL,
+    id_usuario UUID NOT NULL,
+    fecha_asignacion DATE NOT NULL,
+    fecha_devolucion DATE,
+    estado_asignacion VARCHAR(255) NOT NULL,
+    observaciones VARCHAR(255)
+    );
+
 -- =========================================================
 -- INDICES tbl_categoria
 -- =========================================================
@@ -67,3 +77,16 @@ CREATE INDEX IF NOT EXISTS idx_activo_categoria
 
 CREATE INDEX IF NOT EXISTS idx_activo_estado_eliminado
     ON tbl_activo(estado_actual, esta_eliminado);
+
+-- =========================================================
+-- INDICES tbl_asignacion
+-- =========================================================
+
+CREATE INDEX IF NOT EXISTS idx_asignacion_activo
+    ON tbl_asignacion(id_activo);
+
+CREATE INDEX IF NOT EXISTS idx_asignacion_usuario
+    ON tbl_asignacion(id_usuario);
+
+CREATE INDEX IF NOT EXISTS idx_asignacion_estado
+    ON tbl_asignacion(estado_asignacion);
