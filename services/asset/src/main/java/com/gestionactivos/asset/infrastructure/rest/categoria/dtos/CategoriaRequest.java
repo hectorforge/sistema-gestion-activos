@@ -28,6 +28,14 @@ public record CategoriaRequest(
         String nombreCategoria,
 
         @Schema(
+                description = "Abreviatura de 3 digitos de la categoria",
+                defaultValue = "MON"
+        )
+        @NotBlank(message = "La abreviatura de la categoria es obligatoria")
+        @Size(max = 3, message = "La abreviatura no puede exceder los 3 caracteres")
+        String abreviaturaCategoria,
+
+        @Schema(
                 description = "Descripción de la categoría",
                 defaultValue = "Categoría para laptops, desktops y accesorios"
         )

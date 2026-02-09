@@ -22,6 +22,7 @@ public class CategoriaUsecase implements ICategoriaUsecaseInPort {
     @Override
     public OperationResult<Categoria> crear(Categoria categoria) {
         try {
+            categoria.setIdCategoria(null);
             Categoria guardada = categoriaRepositoryOutPort.guardar(categoria);
             return OperationResult.success(guardada);
         } catch (Exception e) {

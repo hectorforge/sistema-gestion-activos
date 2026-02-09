@@ -19,6 +19,7 @@ public class CategoriaDtoEntityMapper {
             categoria.setIdCategoria(UUID.fromString(request.id()));
 
         categoria.setNombreCategoria(request.nombreCategoria());
+        categoria.setAbreviaturaCategoria(request.abreviaturaCategoria());
         categoria.setDescripcionCategoria(request.descripcionCategoria());
         categoria.setUrlImgCategoria(request.urlImgCategoria());
 
@@ -34,6 +35,7 @@ public class CategoriaDtoEntityMapper {
         return new CategoriaResponse(
                 domain.getIdCategoria() != null ? domain.getIdCategoria().toString() : null,
                 domain.getNombreCategoria(),
+                domain.getAbreviaturaCategoria(),
                 domain.getDescripcionCategoria(),
                 domain.getUrlImgCategoria(),
                 domain.getEsActivo() != null ? domain.getEsActivo().toString() : null,
