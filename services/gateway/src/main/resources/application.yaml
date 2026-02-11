@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      routes:
+        # AUTH
+        - id: auth-service
+          uri: http://localhost:8051
+          predicates:
+            - Path=/auth/**
+
+        # ASSETS / ACTIVOS
+        - id: asset-service
+          uri: http://localhost:8050
+          predicates:
+            - Path=/assets/**
+
+        # REPORTES
+        - id: report-service
+          uri: http://localhost:8052
+          predicates:
+            - Path=/reports/**
+
+        # IMÁGENES / ARCHIVOS
+        - id: media-service
+          uri: http://localhost:8053
+          predicates:
+            - Path=/media/**
