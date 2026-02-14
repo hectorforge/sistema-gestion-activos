@@ -7,20 +7,22 @@ import com.gestionactivos.asset.domain.activo.ports.out.ICodigoInventarioGenerat
 import com.gestionactivos.asset.domain.activo.utils.ActivoFiltro;
 import com.gestionactivos.asset.domain.activo.utils.EstadoActivo;
 import com.gestionactivos.asset.domain.categoria.Categoria;
-import com.gestionactivos.asset.domain.categoria.ports.in.ICategoriaUsecaseInPort;
 import com.gestionactivos.asset.domain.categoria.ports.out.ICategoriaRepositoryOutPort;
 import com.gestionactivos.asset.domain.common.ErrorCatalog;
 import com.gestionactivos.asset.domain.common.OperationResult;
 import com.gestionactivos.asset.domain.common.PagedResult;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ActivoUsecase implements IActivoUsecaseInPort {
 
     private final IActivoRepositoryOutPort activoRepositoryOutPort;
@@ -33,6 +35,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
         try {
             Optional<Categoria> categoriaEncontrada = categoriaRepository.obtenerPorId(activo.getCategoriaId());
             if(categoriaEncontrada.isEmpty()){
+                log.warn("Creación de activo fallida: categoría no encontrada. categoriaId={}", activo.getCategoriaId());
                 return OperationResult.failureSingle(
                         ErrorCatalog.CATEGORIA_NOT_FOUND.getErrorCode(),
                         ErrorCatalog.CATEGORIA_NOT_FOUND.getErrorMessage()
@@ -45,6 +48,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             Activo guardado = activoRepositoryOutPort.guardar(activo);
             return OperationResult.success(guardado);
         } catch (Exception e) {
+            log.error("Error al crear activo. categoriaId={}", activo != null ? activo.getCategoriaId() : "<unknown>", e);
             return OperationResult.failureSingle(
                     ErrorCatalog.ACTIVO_SAVE_ERROR.getErrorCode(),
                     ErrorCatalog.ACTIVO_SAVE_ERROR.getErrorMessage()
@@ -59,6 +63,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             Optional<Activo> existenteOpt = activoRepositoryOutPort.obtenerPorId(id);
 
             if (existenteOpt.isEmpty()) {
+                log.warn("Actualización de activo fallida: no encontrado. id={}", id);
                 return OperationResult.failureSingle(
                         ErrorCatalog.ACTIVO_NOT_FOUND.getErrorCode(),
                         ErrorCatalog.ACTIVO_NOT_FOUND.getErrorMessage()
@@ -67,6 +72,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
 
             Activo existente = existenteOpt.get();
             if (activo.getIdActivo() != null && !id.equals(activo.getIdActivo())) {
+                log.warn("Actualización de activo fallida: id mismatch. idPayload={} idEntity={}", id, activo.getIdActivo());
                 return OperationResult.failureSingle(
                         ErrorCatalog.ACTIVO_ID_MISMATCH.getErrorCode(),
                         ErrorCatalog.ACTIVO_INVALID_DATA.getErrorMessage()
@@ -83,6 +89,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             return OperationResult.success(actualizado);
 
         } catch (Exception e) {
+            log.error("Error al actualizar activo. id={} idPayload={}", id, activo != null ? activo.getIdActivo() : "<unknown>", e);
             return OperationResult.failureSingle(
                     ErrorCatalog.ACTIVO_SAVE_ERROR.getErrorCode(),
                     ErrorCatalog.ACTIVO_SAVE_ERROR.getErrorMessage()
@@ -98,6 +105,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             return OperationResult.success(true);
         }
 
+        log.warn("Cambio de estado fallido: activo no encontrado. id={} nuevoEstado={}", idActivo, nuevoEstado);
         return OperationResult.failureSingle(
                 ErrorCatalog.ACTIVO_NOT_FOUND.getErrorCode(),
                 "No se pudo cambiar el estado: Activo no encontrado."
@@ -112,6 +120,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             return OperationResult.success(true);
         }
 
+        log.warn("Activar/Desactivar fallido: activo no encontrado. id={} esActivo={}", idActivo, esActivo);
         return OperationResult.failureSingle(
                 ErrorCatalog.ACTIVO_NOT_FOUND.getErrorCode(),
                 "No se pudo activar/desactivar: Activo no encontrado."
@@ -126,6 +135,7 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             return OperationResult.success(true);
         }
 
+        log.warn("Eliminación fallida: activo no encontrado. id={}", idActivo);
         return OperationResult.failureSingle(
                 ErrorCatalog.ACTIVO_NOT_FOUND.getErrorCode(),
                 "No se pudo eliminar: El activo no existe."
@@ -134,12 +144,15 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
 
     @Override
     public OperationResult<Activo> obtenerPorId(UUID idActivo) {
-        return activoRepositoryOutPort.obtenerPorId(idActivo)
-                .map(OperationResult::success)
-                .orElseGet(() -> OperationResult.failureSingle(
-                        ErrorCatalog.ACTIVO_NOT_FOUND.getErrorCode(),
-                        ErrorCatalog.ACTIVO_NOT_FOUND.getErrorMessage()
-                ));
+        Optional<Activo> opt = activoRepositoryOutPort.obtenerPorId(idActivo);
+        if (opt.isEmpty()) {
+            log.warn("Obtención de activo fallida: no encontrado. id={}", idActivo);
+            return OperationResult.failureSingle(
+                    ErrorCatalog.ACTIVO_NOT_FOUND.getErrorCode(),
+                    ErrorCatalog.ACTIVO_NOT_FOUND.getErrorMessage()
+            );
+        }
+        return OperationResult.success(opt.get());
     }
 
     @Override
@@ -148,10 +161,28 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             PagedResult<Activo> resultado = activoRepositoryOutPort.findAll(filtros, page, size);
             return OperationResult.success(resultado);
         } catch (Exception e) {
+            log.error("Error al listar los activos. filtros={} page={} size={}", filtros != null ? filtros.toString() : "<null>", page, size, e);
             return OperationResult.failureSingle(
                     ErrorCatalog.GENERIC_ERROR.getErrorCode(),
                     "Error al listar los activos."
             );
         }
     }
+
+    @Override
+    public OperationResult<List<Activo>> listarReporte(ActivoFiltro filtros) {
+        try {
+            List<Activo> resultado = activoRepositoryOutPort.findAllSinPaginacion(filtros);
+            return OperationResult.success(resultado);
+        } catch (Exception e) {
+            log.error("Error al listar todos los activos. filtros={}",
+                    filtros != null ? filtros.toString() : "<null>", e);
+
+            return OperationResult.failureSingle(
+                    ErrorCatalog.GENERIC_ERROR.getErrorCode(),
+                    "Error al listar los activos para reporte."
+            );
+        }
+    }
+
 }

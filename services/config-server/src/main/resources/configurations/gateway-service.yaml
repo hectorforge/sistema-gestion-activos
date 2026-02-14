@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+jwt:
+  secret: cp06FBsY4rqArnpuGPdY8jq3RFhFHX7AIpjEYLyHyFDXHJNIgAih7rD4kuXABevtF2SN5Vy8Sz012ew1dewdcsac213SUPERSEGURACLAVEJWT2025ULTRALARGAPARAH512sdaddasdsadsadasd
+  expiration-ms: 3600000   # 1 hora
+  refresh-expiration-ms: 86400000 # 24 horas
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+
+          discovery:
+            locator:
+              enabled: true
+
+          routes:
+            # AUTH
+            - id: auth-service
+              uri: http://localhost:8051
+              predicates:
+                - Path=/auth/**
+
+            # ASSETS / ACTIVOS
+            - id: asset-service
+              uri: http://localhost:8050
+              predicates:
+                - Path=/assets/**
+              filters:
+                - JwtAuthentication
+
+            # REPORTES
+            - id: report-service
+              uri: http://localhost:8282
+              predicates:
+                - Path=/reports/**
+              filters:
+                - JwtAuthentication
+
+            # IMÁGENES / ARCHIVOS
+            - id: media-service
+              uri: http://localhost:8053
+              predicates:
+                - Path=/media/**
+              filters:
+                - JwtAuthentication

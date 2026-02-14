@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/categorias")
+@RequestMapping("/categories")
 @Tag(name = "Categorias", description = "API para la correcta gestión de categorías dentro de la institución. Permite crear, actualizar, consultar, eliminar y listar categorías con filtros y paginación.")
 @RequiredArgsConstructor
 // Documentacion: http://localhost:8050/swagger-ui/index.html

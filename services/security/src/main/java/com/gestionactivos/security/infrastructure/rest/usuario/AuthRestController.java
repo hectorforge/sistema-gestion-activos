@@ -4,10 +4,7 @@ import com.gestionactivos.security.domain.common.OperationResult;
 import com.gestionactivos.security.domain.usuario.Usuario;
 import com.gestionactivos.security.domain.usuario.ports.in.IUsuarioUsecaseInPort;
 import com.gestionactivos.security.domain.usuario.utils.JwtResult;
-import com.gestionactivos.security.infrastructure.rest.usuario.dtos.AuthLoginRequest;
-import com.gestionactivos.security.infrastructure.rest.usuario.dtos.AuthRegisterRequest;
-import com.gestionactivos.security.infrastructure.rest.usuario.dtos.UsuarioProfileRequest;
-import com.gestionactivos.security.infrastructure.rest.usuario.dtos.UsuarioResponse;
+import com.gestionactivos.security.infrastructure.rest.usuario.dtos.*;
 import com.gestionactivos.security.infrastructure.rest.mappers.UsuarioDtoEntityMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -60,9 +57,8 @@ public class AuthRestController {
     @PreAuthorize("isAuthenticated()")
     public OperationResult<UsuarioResponse> actualizarPerfil(@PathVariable UUID id, @Validated @RequestBody UsuarioProfileRequest request) {
         Usuario usuario = mapper.toDomain(request);
-        usuario.setId(id);
-
-        OperationResult<Usuario> result = usuarioUsecase.actualizarPerfil(usuario);
+        //usuario.setId(id);
+        OperationResult<Usuario> result = usuarioUsecase.actualizarPerfil(id,usuario);
 
         if (result.isSuccess()) {
             return OperationResult.success(mapper.toResponse(result.data()));
@@ -74,10 +70,8 @@ public class AuthRestController {
     @Operation(summary = "Cambiar contraseña", description = "Permite al usuario cambiar su contraseña actual por una nueva.")
     @PatchMapping("/{id}/password")
     @PreAuthorize("isAuthenticated()")
-    public OperationResult<Boolean> cambiarContrasena(@PathVariable UUID id,
-                                                      @RequestParam String contrasenaActual,
-                                                      @RequestParam String nuevaContrasena) {
-        OperationResult<Boolean> result = usuarioUsecase.cambiarContrasena(id, contrasenaActual, nuevaContrasena);
+    public OperationResult<Boolean> cambiarContrasena(@PathVariable UUID id, @RequestBody CambiarContrasenaRequest cambiarContrasenaRequest) {
+        OperationResult<Boolean> result = usuarioUsecase.cambiarContrasena(id, cambiarContrasenaRequest.contrasenaActual(), cambiarContrasenaRequest.nuevaContrasena());
 
         if (result.isSuccess()) {
             return OperationResult.success(true);

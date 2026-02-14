@@ -6,6 +6,7 @@ import com.gestionactivos.asset.domain.activo.utils.EstadoActivo;
 import com.gestionactivos.asset.domain.common.OperationResult;
 import com.gestionactivos.asset.domain.common.PagedResult;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface IActivoUsecaseInPort {
@@ -16,4 +17,5 @@ public interface IActivoUsecaseInPort {
     OperationResult<Boolean> eliminarPorId(UUID idActivo);
     OperationResult<Activo> obtenerPorId(UUID idActivo);
     OperationResult<PagedResult<Activo>> listar(ActivoFiltro filtros,int page, int size);
+    OperationResult<List<Activo>> listarReporte(ActivoFiltro filtro);
 }

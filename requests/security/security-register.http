@@ -1,0 +1,13 @@
+### GET request to example server
+POST http://127.0.0.1:8051/auth/register
+Content-Type: application/json
+
+{
+  "nombre": "Pepillo",
+  "apellido": "Grillo",
+  "email": "juanitoAlimaña1@example.com",
+  "password": "654321",
+  "fotoDePerfil": "https://example.com/foto.jpg"
+}
+
+###

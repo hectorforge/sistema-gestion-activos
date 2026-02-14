@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/activos")
+@RequestMapping("/assets")
 @Tag(name = "Activos", description = "API para la gestión de activos de la institución. Permite crear, actualizar, consultar, activar/desactivar y eliminar activos, así como listar activos con filtros y paginación.")
 @RequiredArgsConstructor
 // Documentacion: http://localhost:8050/swagger-ui/index.html
@@ -124,4 +124,28 @@ public class ActivoRestController {
         }
         return OperationResult.failureSingle(result.errorCode(), result.errorMessage());
     }
+
+    @Operation(
+            summary = "Listar activos para reporte",
+            description = "Devuelve todos los activos sin paginación para generación de reportes.")
+    @GetMapping("/report")
+    public OperationResult<List<ActivoResponse>> listarParaReporte(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String codigo,
+            @RequestParam(required = false) UUID categoriaId,
+            @RequestParam(required = false) Boolean esActivo) {
+
+        OperationResult<List<Activo>> result =
+                activoUsecase.listarReporte(new ActivoFiltro(nombre, codigo, categoriaId, esActivo));
+
+        if (result.isSuccess()) {
+            List<ActivoResponse> response = result.data().stream()
+                    .map(mapper::toResponse)
+                    .toList();
+            return OperationResult.success(response);
+        }
+
+        return OperationResult.failureSingle(result.errorCode(), result.errorMessage());
+    }
+
 }

@@ -1,10 +1,9 @@
-package com.gestionactivos.security.infrastructure.security.jwt;
+package com.gestionactivos.gateway.services;
 
-import com.gestionactivos.security.domain.usuario.Usuario;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,6 @@ import java.util.Date;
  * Usa la librería io.jsonwebtoken (jjwt 0.12.6)
  */
 @Component
-@RequiredArgsConstructor
 public class JwtUtils {
 
     @Value("${jwt.secret}")
@@ -31,33 +29,6 @@ public class JwtUtils {
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
-
-    /**
-     * Genera un token JWT para un usuario
-     * @param usuario normalmente el email o username
-     * @return token JWT firmado
-     */
-    public String generateToken(Usuario usuario) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-
-        String iniciales = usuario.getNombre().substring(0,1).toUpperCase() + usuario.getApellido().substring(0,1).toUpperCase();
-
-        return Jwts.builder()
-                .setSubject(usuario.getEmail())
-                .claim("user_id", usuario.getId())
-                .claim("nombre_completo", String.format("%s %s", usuario.getNombre(), usuario.getApellido()))
-                .claim("apellido", usuario.getApellido())
-                .claim("nombre", usuario.getNombre())
-                .claim("nombre_completo_iniciales", iniciales)
-                .claim("foto_perfil", usuario.getFotoDePerfil())
-                .claim("rol", usuario.getRol().name())
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .compact();
-    }
-
     /**
      * Obtiene el subject (email o username) desde un token válido
      * @param token JWT
@@ -105,4 +76,21 @@ public class JwtUtils {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+
+    public String getUserId(Claims claims) {
+        return claims.get("user_id", String.class);
+    }
+
+    public String getRole(Claims claims) {
+        return claims.get("rol", String.class);
+    }
+
+    public String getEmail(Claims claims) {
+        return claims.get("email", String.class);
+    }
+    public Claims getClaims(String token) {
+        return parseToken(token);
+    }
+
 }

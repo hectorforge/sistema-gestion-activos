@@ -128,4 +128,21 @@ public class ActivoRepositoryOutAdapter implements IActivoRepositoryOutPort {
     public String obtenerUltimoCodigoDelDia(String abreviatura) {
         return activoRepository.obtenerUltimoCodigoDelDia(abreviatura);
     }
+
+    @Override
+    public List<Activo> findAllSinPaginacion(ActivoFiltro filtros) {
+
+        List<ActivoEntity> entities =
+                activoRepository.buscarConFiltrosSinPaginacion(
+                        filtros.nombre(),
+                        filtros.codigoInventario(),
+                        filtros.categoriaId(),
+                        filtros.esActivo()
+                );
+
+        return entities.stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
 }

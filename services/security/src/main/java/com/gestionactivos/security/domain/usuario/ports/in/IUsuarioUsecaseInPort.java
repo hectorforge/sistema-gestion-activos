@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface IUsuarioUsecaseInPort {
     OperationResult<Usuario> registrar(Usuario usuario);
     OperationResult<Usuario> obtenerPorEmail(String email);
-    OperationResult<Usuario> actualizarPerfil(Usuario usuario);
+    OperationResult<Usuario> actualizarPerfil(UUID id,Usuario usuario);
     OperationResult<Boolean> cambiarContrasena(UUID id, String contrasenaActual, String nuevaContrasena);
     OperationResult<JwtResult> iniciarSesion(String email, String password);
     OperationResult<Boolean> eliminarCuenta(UUID id);

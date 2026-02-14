@@ -3,6 +3,7 @@ package com.gestionactivos.security.domain.common;
 public enum ErrorCatalog {
     USUARIO_NOT_FOUND("USUARIO_404", "El usuario no fue encontrado."),
     USUARIO_EMAIL_DUPLICADO("USUARIO_409", "El email ya está registrado."),
+    USUARIO_NOT_MATCH("USUARIO_402", "El id del usuario a editar no coincide con el id del usuario enviado"),
     USUARIO_INACTIVO("USUARIO_403", "El usuario está inactivo o eliminado."),
     CONTRASENA_INCORRECTA("PASSWORD_401", "La contraseña actual es incorrecta."),
     JWT_GENERATION_ERROR("JWT_500", "No se pudo generar el token JWT."),
