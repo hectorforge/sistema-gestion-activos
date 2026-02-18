@@ -8,7 +8,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,17 +33,16 @@ public class ReportService {
                 esActivo,
                 "Bearer " + token
         );
-
         List<ActivoReporteResponse> activos = result.getData();
 
         try {
-            return generarExcel(activos);
+            return generarExcel(activos, token);
         } catch (Exception e) {
             throw new RuntimeException("Error generando reporte Excel", e);
         }
     }
 
-    private byte[] generarExcel(List<ActivoReporteResponse> activos) throws Exception {
+    private byte[] generarExcel(List<ActivoReporteResponse> activos, String token) throws Exception {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Activos");
 
@@ -90,11 +91,18 @@ public class ReportService {
                 "Proveedor", "Vida Útil (Meses)", "Observaciones", "Es Activo",
                 "Fecha Creación", "Fecha Actualización"
         };
-
         for (int i = 0; i < columnas.length; i++) {
             Cell cell = header.createCell(i);
             cell.setCellValue(columnas[i]);
             cell.setCellStyle(headerStyle);
+        }
+
+        var categoriasResult = categoriaClientFeign.listarCategorias(null, null, "Bearer " + token);
+        Map<String, String> categoriaMap = new HashMap<>();
+        if (categoriasResult != null && categoriasResult.isSuccess() && categoriasResult.getData() != null) {
+            categoriasResult.getData().forEach(c -> {
+                categoriaMap.put(c.getIdCategoria(), c.getNombreCategoria());
+            });
         }
 
         int rowNum = 2;
@@ -105,7 +113,13 @@ public class ReportService {
             row.createCell(2).setCellValue(a.getNombreActivo());
             row.createCell(3).setCellValue(a.getDescripcion());
             row.createCell(4).setCellValue(a.getUrlImgActivo());
-            row.createCell(5).setCellValue(a.getCategoriaId() != null ? a.getCategoriaId().toString() : "");
+
+            String categoriaNombre = "";
+            if (a.getCategoriaId() != null) {
+                categoriaNombre = categoriaMap.getOrDefault(a.getCategoriaId().toString(), "");
+            }
+            row.createCell(5).setCellValue(categoriaNombre);
+
             row.createCell(6).setCellValue(a.getEstadoActual());
             row.createCell(7).setCellValue(a.getUbicacionFisica());
             row.createCell(8).setCellValue(a.getFechaIngreso() != null ? a.getFechaIngreso().format(fechaFormatter) : "");
@@ -123,8 +137,7 @@ public class ReportService {
         }
 
         sheet.setAutoFilter(new org.apache.poi.ss.util.CellRangeAddress(1, 1, 0, columnas.length - 1));
-
-        int[] anchos = {15, 20, 25, 40, 50, 15, 15, 25, 15, 18, 25, 15, 40, 15, 20, 20};
+        int[] anchos = {15, 20, 25, 40, 50, 25, 15, 25, 15, 18, 25, 15, 40, 15, 20, 20};
         for (int i = 0; i < columnas.length; i++) {
             sheet.setColumnWidth(i, anchos[i] * 256);
         }

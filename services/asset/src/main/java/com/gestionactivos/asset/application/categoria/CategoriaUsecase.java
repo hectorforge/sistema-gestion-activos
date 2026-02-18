@@ -1,5 +1,6 @@
 package com.gestionactivos.asset.application.categoria;
 
+import com.gestionactivos.asset.domain.activo.Activo;
 import com.gestionactivos.asset.domain.categoria.Categoria;
 import com.gestionactivos.asset.domain.categoria.ports.in.ICategoriaUsecaseInPort;
 import com.gestionactivos.asset.domain.categoria.ports.out.ICategoriaRepositoryOutPort;
@@ -7,9 +8,11 @@ import com.gestionactivos.asset.domain.categoria.utils.CategoriaFiltro;
 import com.gestionactivos.asset.domain.common.ErrorCatalog;
 import com.gestionactivos.asset.domain.common.OperationResult;
 import com.gestionactivos.asset.domain.common.PagedResult;
+import com.gestionactivos.asset.infrastructure.persistence.categoria.CategoriaEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -98,6 +101,19 @@ public class CategoriaUsecase implements ICategoriaUsecaseInPort {
             return OperationResult.failureSingle(
                     ErrorCatalog.GENERIC_ERROR.getErrorCode(),
                     ErrorCatalog.GENERIC_ERROR.getErrorMessage()
+            );
+        }
+    }
+
+    @Override
+    public OperationResult<List<Categoria>> listarReporte(CategoriaFiltro filtros) {
+        try {
+            List<Categoria> resultado = categoriaRepositoryOutPort.findAllSinPaginacion(filtros);
+            return OperationResult.success(resultado);
+        } catch (Exception e) {
+            return OperationResult.failureSingle(
+                    ErrorCatalog.GENERIC_ERROR.getErrorCode(),
+                    "Error al listar los activos para reporte."
             );
         }
     }

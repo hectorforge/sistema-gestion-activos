@@ -13,12 +13,10 @@ import java.util.List;
 @FeignClient(name = "categoriaClient", url = "http://localhost:8050")
 public interface CategoriaClientFeign {
 
-    @GetMapping("/categories")
+    @GetMapping("/categories/report")
     OperationResult<List<CategoriaReporteResponse>> listarCategorias(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) Boolean esActivo,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "1000") int size,
             @RequestHeader("Authorization") String bearerToken
     );
 }

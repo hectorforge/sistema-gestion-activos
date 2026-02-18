@@ -51,6 +51,16 @@ CREATE TABLE IF NOT EXISTS tbl_asignacion (
     observaciones VARCHAR(255)
     );
 
+CREATE TABLE IF NOT EXISTS tbl_incidente (
+    id_incidente UUID PRIMARY KEY NOT NULL,
+    id_activo UUID NOT NULL,
+    id_usuario UUID NOT NULL,
+    tipo_incidente VARCHAR(255) NOT NULL,
+    descripcion VARCHAR(1000),
+    fecha_reporte TIMESTAMP NOT NULL,
+    estado_incidente VARCHAR(255) NOT NULL
+);
+
 -- =========================================================
 -- INDICES tbl_categoria
 -- =========================================================
@@ -90,3 +100,18 @@ CREATE INDEX IF NOT EXISTS idx_asignacion_usuario
 
 CREATE INDEX IF NOT EXISTS idx_asignacion_estado
     ON tbl_asignacion(estado_asignacion);
+
+-- =========================================================
+-- INDICES tbl_incidente
+-- =========================================================
+CREATE INDEX IF NOT EXISTS idx_incidente_activo
+    ON tbl_incidente(id_activo);
+
+CREATE INDEX IF NOT EXISTS idx_incidente_usuario
+    ON tbl_incidente(id_usuario);
+
+CREATE INDEX IF NOT EXISTS idx_tipo_incidente
+    ON tbl_incidente(tipo_incidente);
+
+CREATE INDEX IF NOT EXISTS idx_estado_incidente
+    ON tbl_incidente(estado_incidente);

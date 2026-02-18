@@ -84,4 +84,9 @@ public class CategoriaRepositoryOutAdapter implements ICategoriaRepositoryOutPor
                 pageResult.isEmpty()
         );
     }
+
+    @Override
+    public List<Categoria> findAllSinPaginacion(CategoriaFiltro filtros) {
+        return List.of();
+    }
 }

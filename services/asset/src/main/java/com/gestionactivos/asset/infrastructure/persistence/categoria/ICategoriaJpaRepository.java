@@ -6,20 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ICategoriaJpaRepository extends JpaRepository<CategoriaEntity, UUID> {
-//    @Query("""
-//        SELECT c FROM CategoriaEntity c
-//        WHERE c.estaEliminado = false
-//        AND (:nombre IS NULL OR UPPER(c.nombreCategoria) LIKE UPPER(CONCAT('%', :nombre, '%')))
-//        AND (:esActivo IS NULL OR c.esActivo = :esActivo)
-//    """)
-//    Page<CategoriaEntity> buscarConFiltros(
-//            @Param("nombre") String nombre,
-//            @Param("esActivo") Boolean esActivo,
-//            Pageable pageable
-//    );
     @Query(
             value = """
             SELECT * FROM tbl_categoria c
@@ -39,6 +29,20 @@ public interface ICategoriaJpaRepository extends JpaRepository<CategoriaEntity, 
             @Param("nombre") String nombre,
             @Param("esActivo") Boolean esActivo,
             Pageable pageable
+    );
+
+    @Query(
+            value = """
+        SELECT * FROM tbl_categoria c
+        WHERE c.esta_eliminado = false
+        AND c.nombre_categoria ILIKE '%' || COALESCE(:nombre, c.nombre_categoria) || '%'
+        AND c.es_activo = COALESCE(:esActivo, c.es_activo)
+    """,
+            nativeQuery = true
+    )
+    List<CategoriaEntity> buscarConFiltrosSinPaginacion(
+            @Param("nombre") String nombre,
+            @Param("esActivo") Boolean esActivo
     );
 
 }

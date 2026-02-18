@@ -5,6 +5,7 @@ import com.gestionactivos.asset.domain.categoria.utils.CategoriaFiltro;
 import com.gestionactivos.asset.domain.common.OperationResult;
 import com.gestionactivos.asset.domain.common.PagedResult;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ICategoriaUsecaseInPort {
@@ -13,4 +14,5 @@ public interface ICategoriaUsecaseInPort {
     OperationResult<Boolean> eliminarPorId(UUID idCategoria);
     OperationResult<Categoria> obtenerPorId(UUID idCategoria);
     OperationResult<PagedResult<Categoria>> listar(CategoriaFiltro filtros, int page, int size);
+    OperationResult<List<Categoria>> listarReporte(CategoriaFiltro filtros);
 }

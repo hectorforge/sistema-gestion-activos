@@ -35,7 +35,7 @@ public class CategoriaRestController {
                     "En caso de fallo, devuelve un código de error y un mensaje descriptivo del problema.")
     @PostMapping
     public OperationResult<CategoriaResponse> crear(
-            @Validated(CrearCategoriaGrupo.class) @RequestBody CategoriaRequest request) {
+           @Validated @RequestBody CategoriaRequest request) {
 
         OperationResult<Categoria> result = categoriaUsecase.crear(mapper.toDomain(request));
         if (result.isSuccess()) {
@@ -115,6 +115,29 @@ public class CategoriaRestController {
                     result.data().hasPrevious(),
                     result.data().isEmpty()
             );
+
+            return OperationResult.success(response);
+        }
+        return OperationResult.failureSingle(result.errorCode(), result.errorMessage());
+    }
+
+    @Operation(
+            summary = "Listar categorías con filtros y paginación",
+            description = "Lista las categorías según filtros opcionales (nombre y estado activo) y permite paginación. " +
+                    "Devuelve un PagedResult con las categorías encontradas, incluyendo información de paginación, " +
+                    "o un error en caso de fallo.")
+    @GetMapping("/report")
+    public OperationResult<List<CategoriaResponse>> listarReporte(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) Boolean esActivo) {
+
+        OperationResult<List<Categoria>> result = categoriaUsecase.listarReporte(new CategoriaFiltro(nombre, esActivo));
+
+        if (result.isSuccess()) {
+            List<CategoriaResponse> response = result.data()
+                    .stream()
+                    .map(mapper::toResponse)
+                    .toList();
 
             return OperationResult.success(response);
         }
