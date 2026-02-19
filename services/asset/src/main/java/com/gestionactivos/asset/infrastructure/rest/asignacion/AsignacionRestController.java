@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/assignment")
+@RequestMapping("/assignments")
 @Tag(name = "Asignaciones", description = "API para la gestión de asignaciones de activos a usuarios.")
 @RequiredArgsConstructor
 public class AsignacionRestController {

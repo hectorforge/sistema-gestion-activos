@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/incidentes")
+@RequestMapping("/incidents")
 @RequiredArgsConstructor
 @Tag(name = "Incidentes", description = "API para la gestión de incidentes asociados a activos.")
 public class IncidenteRestController {

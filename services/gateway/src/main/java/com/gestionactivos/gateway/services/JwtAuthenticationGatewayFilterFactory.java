@@ -33,7 +33,7 @@ public class JwtAuthenticationGatewayFilterFactory
                     .getFirst(HttpHeaders.AUTHORIZATION);
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return unauthorized(exchange);
+                return chain.filter(exchange);
             }
 
             String token = authHeader.substring(7);

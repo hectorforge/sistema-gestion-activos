@@ -1,0 +1,7 @@
+->Gateway
+Valida JWT si viene
+Si no viene → deja pasar (no bloquea automáticamente)
+Si viene inválido → bloquea
+Si viene válido → extrae claims y los pasa como headers
+
+-> El Gateway no decide permisos finos.
