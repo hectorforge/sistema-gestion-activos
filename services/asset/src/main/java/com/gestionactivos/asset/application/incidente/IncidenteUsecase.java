@@ -65,6 +65,7 @@ public class IncidenteUsecase implements IIncidenteUsecaseInPort {
             }
 
             incidente.setIdIncidente(id);
+            incidente.setFechaReporte(existenteOpt.get().getFechaReporte());
 
             Incidente actualizado = repository.guardar(incidente);
             return OperationResult.success(actualizado);
