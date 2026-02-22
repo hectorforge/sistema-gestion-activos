@@ -20,7 +20,7 @@ public interface IUsuarioJpaRepository extends JpaRepository<UsuarioEntity, UUID
           AND (:nombre IS NULL OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')))
           AND (:email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%')))
     """)
-    Page<UsuarioEntity> listar(
+    Page<UsuarioEntity> listarFiltrado(
             @Param("rol") Rol rol,
             @Param("nombre") String nombre,
             @Param("email") String email,

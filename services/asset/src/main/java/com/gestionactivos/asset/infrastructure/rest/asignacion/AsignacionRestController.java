@@ -14,6 +14,7 @@ import com.gestionactivos.asset.infrastructure.rest.asignacion.validators.CrearA
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,7 @@ public class AsignacionRestController {
 
     @Operation(summary = "Crear asignación")
     @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<AsignacionResponse> crear(@Validated(CrearAsignacionGrupo.class) @RequestBody AsignacionRequest request) {
         OperationResult<Asignacion> result =
                 asignacionUsecaseInPort.crear(mapper.toDomain(request));
@@ -43,6 +45,7 @@ public class AsignacionRestController {
 
     @Operation(summary = "Actualizar asignación")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<AsignacionResponse> actualizar(
             @PathVariable UUID id,
             @Validated(ActualizarAsignacionGrupo.class) @RequestBody AsignacionRequest request) {
@@ -58,6 +61,7 @@ public class AsignacionRestController {
 
     @Operation(summary = "Obtener asignación por ID")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','TRABAJADOR','USUARIO')")
     public OperationResult<AsignacionResponse> obtenerPorId(@PathVariable UUID id) {
         OperationResult<Asignacion> result =
                 asignacionUsecaseInPort.obtenerPorId(id);
@@ -70,12 +74,14 @@ public class AsignacionRestController {
 
     @Operation(summary = "Eliminar asignación")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<Boolean> eliminar(@PathVariable UUID id) {
         return asignacionUsecaseInPort.eliminarPorId(id);
     }
 
     @Operation(summary = "Cambiar estado de asignación")
     @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<AsignacionResponse> cambiarEstado(
             @PathVariable UUID id,
             @RequestParam EstadoAsignacion nuevoEstado) {
@@ -91,6 +97,7 @@ public class AsignacionRestController {
 
     @Operation(summary = "Listar asignaciones con filtros y paginación")
     @GetMapping
+    @PreAuthorize("permitAll()")
     public OperationResult<PagedResult<AsignacionResponse>> listar(
             @RequestParam(required = false) UUID idActivo,
             @RequestParam(required = false) UUID idUsuario,

@@ -8,10 +8,13 @@ import com.gestionactivos.security.domain.usuario.ports.in.IPasswordEncoderInPor
 import com.gestionactivos.security.domain.usuario.ports.in.IUsuarioUsecaseInPort;
 import com.gestionactivos.security.domain.usuario.ports.out.IUsuarioRepositoryOutPort;
 import com.gestionactivos.security.domain.usuario.utils.JwtResult;
+import com.gestionactivos.security.domain.usuario.utils.Rol;
+import com.gestionactivos.security.domain.usuario.utils.UsuarioFiltros;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,6 +40,7 @@ public class UsuarioUsecase implements IUsuarioUsecaseInPort {
 
             usuario.setPass(passwordEncoder.encode(usuario.getPass()));
             usuario.setEsActivo(true);
+            usuario.setRol(Rol.TRABAJADOR);
             usuario.setEstaEliminado(false);
 
             Usuario saved = repository.guardar(usuario);
@@ -212,6 +216,30 @@ public class UsuarioUsecase implements IUsuarioUsecaseInPort {
 
         }catch (Exception e){
             log.error("Error al obtener usuario por email {}", email, e);
+            return OperationResult.failureSingle(
+                    ErrorCatalog.GENERIC_ERROR.getErrorCode(),
+                    ErrorCatalog.GENERIC_ERROR.getErrorMessage()
+            );
+        }
+    }
+
+    @Override
+    public OperationResult<List<Usuario>> listar() {
+        try {
+            List<Usuario> usuarios = repository.listar();
+
+            if (usuarios == null || usuarios.isEmpty()) {
+                log.warn("Listado de usuarios vacío");
+                return OperationResult.failureSingle(
+                        ErrorCatalog.USUARIO_NOT_FOUND.getErrorCode(),
+                        "No se encontraron usuarios registrados"
+                );
+            }
+
+            return OperationResult.success(usuarios);
+
+        } catch (Exception e) {
+            log.error("Error al listar usuarios", e);
             return OperationResult.failureSingle(
                     ErrorCatalog.GENERIC_ERROR.getErrorCode(),
                     ErrorCatalog.GENERIC_ERROR.getErrorMessage()

@@ -4,6 +4,7 @@ import com.gestionactivos.security.domain.common.OperationResult;
 import com.gestionactivos.security.domain.usuario.Usuario;
 import com.gestionactivos.security.domain.usuario.utils.JwtResult;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface IUsuarioUsecaseInPort {
@@ -13,4 +14,5 @@ public interface IUsuarioUsecaseInPort {
     OperationResult<Boolean> cambiarContrasena(UUID id, String contrasenaActual, String nuevaContrasena);
     OperationResult<JwtResult> iniciarSesion(String email, String password);
     OperationResult<Boolean> eliminarCuenta(UUID id);
+    OperationResult<List<Usuario>> listar();
 }

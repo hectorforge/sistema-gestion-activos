@@ -62,9 +62,9 @@ public class UsuarioRepositoryOutAdapter implements IUsuarioRepositoryOutPort {
 
     @Override
     @Transactional(readOnly = true)
-    public PagedResult<Usuario> listar(UsuarioFiltros filtros, int page, int size) {
+    public PagedResult<Usuario> listarFiltrado(UsuarioFiltros filtros, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<UsuarioEntity> pageResult = usuarioJpaRepository.listar(
+        Page<UsuarioEntity> pageResult = usuarioJpaRepository.listarFiltrado(
                 Rol.valueOf(filtros.rol()),
                 filtros.nombre(),
                 filtros.email(),
@@ -87,5 +87,11 @@ public class UsuarioRepositoryOutAdapter implements IUsuarioRepositoryOutPort {
                 pageResult.hasPrevious(),
                 pageResult.isEmpty()
         );
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<Usuario> listar() {
+        return usuarioJpaRepository.findAll().stream().map(mapper::toDomain).toList();
     }
 }

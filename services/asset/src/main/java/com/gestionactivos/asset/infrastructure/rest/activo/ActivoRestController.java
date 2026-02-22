@@ -14,6 +14,8 @@ import com.gestionactivos.asset.infrastructure.rest.activo.validators.CrearActiv
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/assets")
 @Tag(name = "Activos", description = "API para la gestión de activos de la institución. Permite crear, actualizar, consultar, activar/desactivar y eliminar activos, así como listar activos con filtros y paginación.")
+
 @RequiredArgsConstructor
 // Documentacion: http://localhost:8050/swagger-ui/index.html
 public class ActivoRestController {
@@ -34,6 +37,7 @@ public class ActivoRestController {
             summary = "Crear un activo",
             description = "Crea un nuevo activo en el sistema. Verifica que la categoría exista y genera automáticamente el código de inventario. Devuelve el activo creado o un error si falla la operación.")
     @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<ActivoResponse> crear(@Validated(CrearActivoGrupo.class) @RequestBody ActivoRequest request) {
         OperationResult<Activo> result = activoUsecase.crear(mapper.toDomain(request));
         if (result.isSuccess()) {
@@ -46,6 +50,7 @@ public class ActivoRestController {
             summary = "Actualizar un activo",
             description = "Actualiza un activo existente. Valida que el activo exista y que el ID proporcionado coincida. Devuelve el activo actualizado o un error si falla la operación.")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<ActivoResponse> actualizar(@Validated(ActualizarActivoGrupo.class) @RequestBody ActivoRequest request, @PathVariable UUID id) {
         OperationResult<Activo> result = activoUsecase.actualizar(id, mapper.toDomain(request));
         if (result.isSuccess()) {
@@ -58,6 +63,7 @@ public class ActivoRestController {
             summary = "Obtener un activo por ID",
             description = "Recupera un activo utilizando su ID único. Devuelve el activo si existe o un error indicando que no se encontró.")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','TRABAJADOR','USUARIO')")
     public OperationResult<ActivoResponse> obtenerPorId(@PathVariable UUID id) {
         OperationResult<Activo> result = activoUsecase.obtenerPorId(id);
         if (result.isSuccess()) {
@@ -70,6 +76,7 @@ public class ActivoRestController {
             summary = "Cambiar estado de negocio de un activo",
             description = "Cambia el estado de negocio de un activo (por ejemplo: en uso, mantenimiento, inactivo) basado en su ID. Devuelve true si se actualizó correctamente o un error si el activo no existe.")
     @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<Boolean> cambiarEstado(@PathVariable UUID id, @RequestParam EstadoActivo nuevoEstado) {
         return activoUsecase.cambiarEstadoNegocio(id, nuevoEstado);
     }
@@ -78,6 +85,7 @@ public class ActivoRestController {
             summary = "Cambiar visibilidad de un activo",
             description = "Activa o desactiva un activo para que sea visible o no en el sistema. Devuelve true si se realizó correctamente o un error si el activo no existe.")
     @PatchMapping("/{id}/visibilidad")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<Boolean> cambiarVisibilidad(@PathVariable UUID id, @RequestParam Boolean esActivo) {
         return activoUsecase.activarDesactivar(id, esActivo);
     }
@@ -86,6 +94,7 @@ public class ActivoRestController {
             summary = "Eliminar un activo",
             description = "Elimina un activo por su ID. Devuelve true si se eliminó correctamente o un error si no existe.")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<Boolean> eliminar(@PathVariable UUID id) {
         return activoUsecase.eliminarPorId(id);
     }
@@ -94,13 +103,18 @@ public class ActivoRestController {
             summary = "Listar activos con filtros y paginación",
             description = "Lista activos según filtros opcionales (nombre, código, categoría, estado activo) y permite paginación. Devuelve un PagedResult con los activos encontrados o un error en caso de fallo.")
     @GetMapping
+    //@PreAuthorize("hasAnyRole('ADMINISTRADOR','TRABAJADOR','USUARIO')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','TRABAJADOR','USUARIO')")
     public OperationResult<PagedResult<ActivoResponse>> listar(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String codigo,
             @RequestParam(required = false) UUID categoriaId,
             @RequestParam(required = false) Boolean esActivo,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size, Authentication auth) {
+
+        String principal = auth.getPrincipal().toString();
+        String rol =  auth.getAuthorities().iterator().next().toString();
 
         OperationResult<PagedResult<Activo>> result = activoUsecase.listar(new ActivoFiltro(nombre, codigo, categoriaId, esActivo), page, size);
 
@@ -129,6 +143,7 @@ public class ActivoRestController {
             summary = "Listar activos para reporte",
             description = "Devuelve todos los activos sin paginación para generación de reportes.")
     @GetMapping("/report")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR')")
     public OperationResult<List<ActivoResponse>> listarParaReporte(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String codigo,

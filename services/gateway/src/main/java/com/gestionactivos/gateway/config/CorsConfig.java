@@ -13,10 +13,10 @@ public class CorsConfig {
     public CorsWebFilter corsWebFilter() {
 
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*"); // En producción especifica dominio
+        config.addAllowedOrigin("http://localhost:4200");
+        config.setAllowCredentials(true);
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
-        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();

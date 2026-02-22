@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -35,6 +36,18 @@ public class AuthRestController {
 
         if (result.isSuccess()) {
             return OperationResult.success(mapper.toResponse(result.data()));
+        }
+
+        return OperationResult.failureSingle(result.errorCode(), result.errorMessage());
+    }
+
+    @Operation(summary = "Listar todos los usuarios", description = "Listar todos los usuarios existentes.")
+    @GetMapping("/listar")
+    public OperationResult<List<UsuarioResponse>> listar() {
+        OperationResult<List<Usuario>> result = usuarioUsecase.listar();
+
+        if (result.isSuccess()) {
+            return OperationResult.success(result.data().stream().map(mapper::toResponse).toList());
         }
 
         return OperationResult.failureSingle(result.errorCode(), result.errorMessage());

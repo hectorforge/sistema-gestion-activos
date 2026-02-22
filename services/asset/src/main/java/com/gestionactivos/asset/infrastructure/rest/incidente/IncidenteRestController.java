@@ -15,6 +15,7 @@ import com.gestionactivos.asset.infrastructure.rest.incidente.validators.CrearIn
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class IncidenteRestController {
 
     @Operation(summary = "Crear incidente")
     @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<IncidenteResponse> crear(
             @Validated(CrearIncidenteGrupo.class)
             @RequestBody IncidenteRequest request) {
@@ -48,6 +50,7 @@ public class IncidenteRestController {
 
     @Operation(summary = "Actualizar incidente")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<IncidenteResponse> actualizar(
             @Validated(ActualizarIncidenteGrupo.class)
             @RequestBody IncidenteRequest request,
@@ -65,6 +68,7 @@ public class IncidenteRestController {
 
     @Operation(summary = "Obtener incidente por ID")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','TRABAJADOR','USUARIO')")
     public OperationResult<IncidenteResponse> obtenerPorId(@PathVariable UUID id) {
 
         OperationResult<Incidente> result =
@@ -79,12 +83,14 @@ public class IncidenteRestController {
 
     @Operation(summary = "Eliminar incidente")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<Boolean> eliminar(@PathVariable UUID id) {
         return incidenteUsecaseInPort.eliminarPorId(id);
     }
 
     @Operation(summary = "Listar incidentes con filtros y paginación")
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','TRABAJADOR','USUARIO')")
     public OperationResult<PagedResult<IncidenteResponse>> listar(
             @RequestParam(required = false) String tipo,
             @RequestParam(required = false) String estado,
@@ -127,6 +133,7 @@ public class IncidenteRestController {
     }
 
     @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<IncidenteResponse> cambiarEstado(
             @PathVariable UUID id,
             @RequestParam String estado) {
@@ -142,6 +149,7 @@ public class IncidenteRestController {
     }
 
     @PatchMapping("/{id}/tipo")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<IncidenteResponse> cambiarTipo(
             @PathVariable UUID id,
             @RequestParam String tipo) {

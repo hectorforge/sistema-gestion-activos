@@ -1,3 +1,8 @@
+jwt:
+  secret: cp06FBsY4rqArnpuGPdY8jq3RFhFHX7AIpjEYLyHyFDXHJNIgAih7rD4kuXABevtF2SN5Vy8Sz012ew1dewdcsac213SUPERSEGURACLAVEJWT2025ULTRALARGAPARAH512sdaddasdsadsadasd
+  expiration-ms: 3600000   # 1 hora
+  refresh-expiration-ms: 86400000 # 24 horas
+
 eureka:
   instance:
     hostname: localhost

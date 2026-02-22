@@ -13,6 +13,7 @@ import com.gestionactivos.asset.infrastructure.rest.categoria.validators.CrearCa
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class CategoriaRestController {
             description = "Crea una nueva categoría en el sistema. Valida los datos de entrada y devuelve la categoría creada en caso de éxito. " +
                     "En caso de fallo, devuelve un código de error y un mensaje descriptivo del problema.")
     @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<CategoriaResponse> crear(
            @Validated @RequestBody CategoriaRequest request) {
 
@@ -49,6 +51,7 @@ public class CategoriaRestController {
             description = "Actualiza una categoría existente. Se valida que la categoría exista y que el ID proporcionado coincida con el de la entidad. " +
                     "Devuelve la categoría actualizada en caso de éxito o un error si la operación falla.")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<CategoriaResponse> actualizar(
             @Validated(ActualizarCategoriaGrupo.class) @RequestBody CategoriaRequest request,
             @PathVariable UUID id) {
@@ -65,6 +68,7 @@ public class CategoriaRestController {
             description = "Recupera una categoría utilizando su ID único. Devuelve la categoría si existe, " +
                     "o un error indicando que no se encontró.")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','TRABAJADOR','USUARIO')")
     public OperationResult<CategoriaResponse> obtenerPorId(@PathVariable UUID id) {
         OperationResult<Categoria> result = categoriaUsecase.obtenerPorId(id);
         if (result.isSuccess()) {
@@ -78,6 +82,7 @@ public class CategoriaRestController {
             description = "Elimina una categoría por su ID. Devuelve true si se eliminó correctamente, " +
                     "o un error si la categoría no existe.")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public OperationResult<Boolean> eliminar(@PathVariable UUID id) {
         return categoriaUsecase.eliminarPorId(id);
     }
@@ -88,6 +93,7 @@ public class CategoriaRestController {
                     "Devuelve un PagedResult con las categorías encontradas, incluyendo información de paginación, " +
                     "o un error en caso de fallo.")
     @GetMapping
+    @PreAuthorize("permitAll()")
     public OperationResult<PagedResult<CategoriaResponse>> listar(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) Boolean esActivo,
