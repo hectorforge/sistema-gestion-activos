@@ -41,6 +41,7 @@ public class ActivoDtoEntityMapper {
 
         activo.setProveedor(request.proveedor());
         activo.setObservaciones(request.observaciones());
+        activo.setEsActivo(Boolean.valueOf(request.esActivo()));
 
         return activo;
     }

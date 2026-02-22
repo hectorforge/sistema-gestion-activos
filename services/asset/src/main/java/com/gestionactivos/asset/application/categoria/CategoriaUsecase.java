@@ -58,6 +58,7 @@ public class CategoriaUsecase implements ICategoriaUsecaseInPort {
             }
 
             categoria.setIdCategoria(id);
+            categoria.setEstaEliminado(existente.getEstaEliminado());
             Categoria actualizada = categoriaRepositoryOutPort.guardar(categoria);
             return OperationResult.success(actualizada);
 

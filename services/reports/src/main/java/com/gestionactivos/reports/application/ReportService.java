@@ -31,7 +31,7 @@ public class ReportService {
                 codigo,
                 categoriaId,
                 esActivo,
-                "Bearer " + token
+                token
         );
         List<ActivoReporteResponse> activos = result.getData();
 
@@ -97,7 +97,7 @@ public class ReportService {
             cell.setCellStyle(headerStyle);
         }
 
-        var categoriasResult = categoriaClientFeign.listarCategorias(null, null, "Bearer " + token);
+        var categoriasResult = categoriaClientFeign.listarCategorias(null, null,  token);
         Map<String, String> categoriaMap = new HashMap<>();
         if (categoriasResult != null && categoriasResult.isSuccess() && categoriasResult.getData() != null) {
             categoriasResult.getData().forEach(c -> {

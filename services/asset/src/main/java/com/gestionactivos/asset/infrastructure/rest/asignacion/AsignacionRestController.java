@@ -32,7 +32,7 @@ public class AsignacionRestController {
 
     @Operation(summary = "Crear asignación")
     @PostMapping
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','TRABAJADOR')")
     public OperationResult<AsignacionResponse> crear(@Validated(CrearAsignacionGrupo.class) @RequestBody AsignacionRequest request) {
         OperationResult<Asignacion> result =
                 asignacionUsecaseInPort.crear(mapper.toDomain(request));

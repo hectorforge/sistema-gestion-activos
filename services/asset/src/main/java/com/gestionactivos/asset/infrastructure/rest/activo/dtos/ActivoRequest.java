@@ -100,6 +100,12 @@ public record ActivoRequest(
                 description = "Observaciones adicionales del activo",
                 defaultValue = "Equipo nuevo con garantía de 3 años"
         )
-        String observaciones
+        String observaciones,
+
+        @Schema(
+                description = "Manejar la visibilidad de un activo",
+                defaultValue = "true"
+        )
+        String esActivo
 ) {
 }

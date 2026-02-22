@@ -63,7 +63,6 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             Optional<Activo> existenteOpt = activoRepositoryOutPort.obtenerPorId(id);
 
             if (existenteOpt.isEmpty()) {
-                log.warn("Actualización de activo fallida: no encontrado. id={}", id);
                 return OperationResult.failureSingle(
                         ErrorCatalog.ACTIVO_NOT_FOUND.getErrorCode(),
                         ErrorCatalog.ACTIVO_NOT_FOUND.getErrorMessage()
@@ -71,25 +70,31 @@ public class ActivoUsecase implements IActivoUsecaseInPort {
             }
 
             Activo existente = existenteOpt.get();
-            if (activo.getIdActivo() != null && !id.equals(activo.getIdActivo())) {
-                log.warn("Actualización de activo fallida: id mismatch. idPayload={} idEntity={}", id, activo.getIdActivo());
-                return OperationResult.failureSingle(
-                        ErrorCatalog.ACTIVO_ID_MISMATCH.getErrorCode(),
-                        ErrorCatalog.ACTIVO_INVALID_DATA.getErrorMessage()
-                );
-            }
 
-            activo.setIdActivo(id);
-            activo.setCodigoInventario(existente.getCodigoInventario());
-            activo.setFechaCreacion(existente.getFechaCreacion());
-            activo.setFechaActualizacion(LocalDateTime.now());
+            // NO tocar codigoInventario
+            // NO tocar fechaCreacion
 
-            Activo actualizado = activoRepositoryOutPort.guardar(activo);
+            existente.setNombreActivo(activo.getNombreActivo());
+            existente.setDescripcion(activo.getDescripcion());
+            existente.setUrlImgActivo(activo.getUrlImgActivo());
+            existente.setCategoriaId(activo.getCategoriaId());
+            existente.setEstadoActual(activo.getEstadoActual());
+            existente.setUbicacionFisica(activo.getUbicacionFisica());
+            existente.setFechaIngreso(activo.getFechaIngreso());
+            existente.setValorReferencial(activo.getValorReferencial());
+            existente.setProveedor(activo.getProveedor());
+            existente.setVidaUtilMeses(activo.getVidaUtilMeses());
+            existente.setObservaciones(activo.getObservaciones());
+            existente.setEsActivo(activo.getEsActivo());
+
+            existente.setFechaActualizacion(LocalDateTime.now());
+
+            Activo actualizado = activoRepositoryOutPort.guardar(existente); // 🔥 AQUÍ
 
             return OperationResult.success(actualizado);
 
         } catch (Exception e) {
-            log.error("Error al actualizar activo. id={} idPayload={}", id, activo != null ? activo.getIdActivo() : "<unknown>", e);
+            log.error("Error al actualizar activo. id={}", id, e);
             return OperationResult.failureSingle(
                     ErrorCatalog.ACTIVO_SAVE_ERROR.getErrorCode(),
                     ErrorCatalog.ACTIVO_SAVE_ERROR.getErrorMessage()
