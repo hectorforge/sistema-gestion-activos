@@ -97,11 +97,15 @@ public class ReportService {
             cell.setCellStyle(headerStyle);
         }
 
-        var categoriasResult = categoriaClientFeign.listarCategorias(null, null,  token);
+        var categoriasResult = categoriaClientFeign.listarCategorias(null, null, token);
+
         Map<String, String> categoriaMap = new HashMap<>();
-        if (categoriasResult != null && categoriasResult.isSuccess() && categoriasResult.getData() != null) {
+
+        if (categoriasResult != null && categoriasResult.getData() != null) {
             categoriasResult.getData().forEach(c -> {
-                categoriaMap.put(c.getIdCategoria(), c.getNombreCategoria());
+                if (c.getIdCategoria() != null) {
+                    categoriaMap.put(c.getIdCategoria(), c.getNombreCategoria());
+                }
             });
         }
 

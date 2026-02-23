@@ -87,6 +87,6 @@ public class CategoriaRepositoryOutAdapter implements ICategoriaRepositoryOutPor
 
     @Override
     public List<Categoria> findAllSinPaginacion(CategoriaFiltro filtros) {
-        return List.of();
+        return categoriaJpaRepository.findAll().stream().map(mapper::toDomain).toList();
     }
 }
