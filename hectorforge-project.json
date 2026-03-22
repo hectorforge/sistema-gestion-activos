@@ -1,0 +1,24 @@
+{
+  "title": "Sistema de pedidos",
+  "description": "Arquitectura hexagonal",
+  "problemSolved": "Escalabilidad",
+
+  "stack": ["Java", "Spring Boot"],
+  "tags": ["microservices"],
+  "useCases": ["Gestión de órdenes"],
+  "responsibilities": ["Diseño backend"],
+
+  "images": [
+    {
+      "url": "https://raw.githubusercontent.com/user/repo/main/assets/1.png",
+      "type": "cover"
+    }
+  ],
+
+  "category": "BACKEND",
+  "status": "ACTIVE",
+  "architecture": "HEXAGONAL",
+  "complexityLevel": "HIGH",
+
+  "featured": true
+}
