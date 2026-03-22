@@ -11,7 +11,9 @@
   "images": [
     {
       "url": "https://raw.githubusercontent.com/hectorforge/sistema-gestion-activos/main/assets/1.png",
-      "type": "cover"
+      "name": "Imagen 1",
+      "description":"Esta imagen representa la primera imagen en el arreglo.",
+      "order":1
     }
   ],
 
